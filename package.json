@@ -1,0 +1,13 @@
+{
+  "name": "vite-plugin-i18n-auto-monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "build": "pnpm --filter \"@vite-plugin-i18n-auto/*\" --filter vite-plugin-i18n-auto run build",
+    "typecheck": "pnpm -r run typecheck"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
