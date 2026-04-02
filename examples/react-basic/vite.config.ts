@@ -12,8 +12,6 @@ export default defineConfig({
       targetLocales: ['en-US'],
       translate: 'manual',
       initialModules: ['common'],
-      entryFile: 'src/main.tsx',
-      injectProvider: false,
     }),
   ],
 });

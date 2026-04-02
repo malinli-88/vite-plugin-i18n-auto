@@ -12,12 +12,27 @@
 
 ## 安装
 
+推荐（始终安装 registry 上的最新版）：
+
 ```bash
 pnpm add -D @vite-plugin-i18n-auto/overall
 ```
 
+与**当前文档、各包 `package.json` 对齐的已发布版本**（可锁版本、便于复盘与 CI）：
+
+```bash
+pnpm add -D @vite-plugin-i18n-auto/overall@0.1.1
+```
+
+> 每次在 npm **升版发布后**，请把上一行里的 `0.1.1` 改成新版本号，并同步更新下文「版本与 GitHub Release」中的说明。
+
 同时需要 **`@vitejs/plugin-react`**、**`vite`**、**`react`**、**`react-dom`**（版本见示例 `package.json` 量级即可）。
 
+### 版本与 GitHub Release
+
+- **当前 npm 对照版本：`0.1.1`**（`@vite-plugin-i18n-auto/core`、`extract`、`runtime`、`overall` 同号发布时一致）。
+- 在 [仓库 Releases](https://github.com/malinli-88/vite-plugin-i18n-auto/releases) 页点击 **Create a new release**：**Choose a tag** 新建 `v0.1.1`（与 `package.json` 的 `version` 对应，惯例加前缀 `v`），**Release title** 可写 `v0.1.1`，说明栏粘贴变更摘要即可；首次公开可写一句「首个公开发布，能力见 README」。
+- 流程建议：**先本地构建并 `pnpm publish` 成功**，再打同名 tag、发 Release，这样文档、`npm` 与 GitHub 上用户看到的版本一致。
 
 ## Vite 配置（与 `examples/react-basic` 一致）
 
@@ -37,8 +52,6 @@ export default defineConfig({
       targetLocales: ['en-US'],
       translate: 'manual',
       initialModules: ['common'],
-      entryFile: 'src/main.tsx',
-      injectProvider: false,
     }),
   ],
 });
@@ -46,7 +59,7 @@ export default defineConfig({
 
 - **`localesDir`**：语言包根目录（同时作为构建提取输出目录与运行时读盘目录）。
 - **`include`**：参与**提取词条**的 glob（可与 runtime 默认处理的 `tsx`/`jsx` 范围不同：无 JSX 的文件仍可被 extract 扫到）。
-- **`injectProvider: false`** 时需在入口**手写** `I18nProvider`（示例做法，避免自动包裹与 `StrictMode` 等布局冲突）。
+- 入口侧须**手写** `I18nProvider`，见下文「入口：包裹 `I18nProvider`」。
 
 可选：`extract` / `runtime` 嵌套对象可对单侧做 `Partial` 覆盖；共享字段会同时下发给两侧。
 
@@ -54,7 +67,9 @@ TypeScript 可使用 **`defineI18nAutoConfig`**（无运行时代码）集中写
 
 ## 入口：包裹 `I18nProvider`
 
-与示例 `src/main.tsx` 相同：在 `createRoot(...).render` 最外层包一层 `I18nProvider`。**首屏**会在 **`initialModules` 预加载完成前**不渲染子树，避免 `t` 读到空表；切换语言时在拉取新语言 JSON 后再重渲染。
+请在应用入口（如 `src/main.tsx`）**手动**用 `I18nProvider` 包裹根组件，与示例一致。与 `createRoot(...).render` 的布局（如 `StrictMode`）顺序由你控制。
+
+**首屏**会在 **`initialModules` 预加载完成前**不渲染子树，避免 `t` 读到空表；切换语言时在拉取新语言 JSON 后再重渲染。
 
 ```tsx
 import { StrictMode } from 'react';
@@ -81,7 +96,7 @@ createRoot(document.getElementById('root')!).render(
 - **限制**：不同 key 若默认语言文案完全相同，反向表可能串译；需区分文案或改用 `t('key')`。
 - **占位符**：自动接入的中文与 **`t`** 相同，使用 **`params`** 与 JSON 内 **`{name}`** 形式。
 
-含**可提取中文**，或手写 **`t` / `$t` / `$$t` / `use$t`** 的 **`*.tsx` / `*.jsx`**（runtime 默认处理 **`**/*.{tsx,jsx}`**）会按需注入 **`virtual:i18n-runtime`**；在需要读语言包或存在待处理中文时会注入 **`preloadI18nModule(模块名)`**；仅 **`$$t`** 且无其它依赖时一般不注入 preload。**`moduleMapping` 与 extract 一致时只用在顶层配置一次。**
+含**可提取中文**，或手写 **`t` / `$t` / `$$t` / `use$t`** 的 **`*.tsx` / `*.jsx`**（runtime 默认处理 `**/*.{tsx,jsx}`）会按需注入 **`virtual:i18n-runtime`**；在需要读语言包或存在待处理中文时会注入 **`preloadI18nModule(模块名)`**；仅 **`$$t`** 且无其它依赖时一般不注入 preload。**`moduleMapping` 与 extract 一致时只用在顶层配置一次。**
 
 > **插件顺序**：请保持 `react()` 与 **`...i18nAuto(...)`** 同写在 `plugins` 里（常见为 `react` 在前）。两者均为 `pre` 时会按注册顺序串联；实现上已避免误匹配 React HMR 注入的 `import { ... }`。
 
@@ -139,13 +154,21 @@ pnpm run extract:auto-i18n
 | 字段 | 示例 | 含义 |
 |------|------|------|
 | `localesDir` | `src/locales` | 语言根目录 |
-| `include` | `['src/**/*.{tsx,ts,jsx,js}']` | extract 扫描范围 |
+| `include` | `['src/**/*.{tsx,ts,jsx,js}']` | extract 扫描范围（glob 列表） |
+| `exclude` | `['**/*.spec.tsx', 'src/generated/**']` | 从 extract 中排除的 glob；命中者**不参与**词条扫描与语言包写盘；不配则仅按 `include`。 |
 | `defaultLocale` / `targetLocales` | `zh-CN` / `['en-US']` | 语言列表 |
-| `translate` | `'manual'` | 目标语言占位模式 |
-| `initialModules` | `['common']` | Provider 预载模块 |
-| `entryFile` | `src/main.tsx` | 自动包 `I18nProvider` 时的匹配路径（示例关闭自动包裹） |
-| `injectProvider` | `false` | 是否尝试改写入口 render（示例为手写 Provider） |
-| `moduleMapping` / `skipCallNames` / `inlineChineseToT` / `dynamicTranslate` / `autoImport` / `typesOutput` / `extract` / `runtime` | — | 进阶用法见包内类型 `I18nAutoOptions` |
+| `translate` | `false` / `'manual'` / `'ai'` | **`false`**：磁盘与 `index.ts` **仅保留默认语言**，不写 `targetLocales` 对应 JSON。**`'manual'`**：为每个目标语言写/合并 JSON，缺 key 时补**空串占位**，便于人工翻译。**`'ai'`**：构建期自动填译**尚未实现**；写盘侧当前与 `'manual'` 同属「生成目标语言文件 + 占位」分支，具体以后续实现为准（见文首说明）。 |
+| `initialModules` | `['common']` | **`I18nProvider`** 启动时预加载的语言包模块，首屏依赖的模块需列入。 |
+| `moduleMapping` | `(normId) => 'common'` | 根据**规范化后的文件 id** 返回语言包**模块名**（如 `common`、`feature/order`）；extract 按模块分目录写 JSON，runtime 生成对应 **`preloadI18nModule('…')`**。必须与 extract 侧规则一致，聚合配置下只配一次；默认等价于**始终** `'common'`。 |
+| `skipCallNames` | `['formatMessage']` | 调用名为列表中任一项的函数时，其**参数里的字符串字面量**不提取、也不被 `inlineChineseToT` 替换（与 extract、runtime 共用同一列表）。 |
+| `inlineChineseToT` | `true`（默认） | runtime 在 **pre transform** 里把 JSX/JS 中的**中文**改写成与语言包 **key** 对齐的形式（默认语言仍可按「原文」路径解析）；设为 `false` 则不改写 AST，适合全部手写 `t('key')` 的场景。 |
+| `dynamicTranslate` | `{ type: 'custom', url: '/api/t', method: 'POST', headers: { } }` | 配置 **`$t`** 的远端请求：`custom` 时向 **`url`** 发请求，可选 **`method`**、**`headers`**；**`type: 'ai'`** 仅为类型占位，行为以 README「说明与限制」为准。传 `null` 或不配则不走该链路。 |
+| `autoImport` | `true`（默认） | 是否在需要的文件中自动**注入**对 **`virtual:i18n-runtime`** 的 import，以及按需注入 **`preloadI18nModule`**；设为 `false` 时需自行保证运行时依赖与预载。 |
+| `typesOutput` | `src/types/i18n-runtime.d.ts` | 构建结束时把 **`virtual:i18n-runtime`** 的 **`.d.ts`** 写入该路径（相对工程根）；**不设或空串**则不落盘，可仅用三斜线引用 **`@vite-plugin-i18n-auto/overall/virtual-i18n-runtime`**。 |
+| `extract` | `{ exclude: ['**/*.spec.ts'] }` | **`Partial<I18nExtractOptions>`**：只覆盖 **extract 插件**选项，并与顶层共享字段**深度合并**；**同名键以此对象为准**（例如只在这里写 `exclude`、`translate` 等仅构建提取需要细化的项）。 |
+| `runtime` | `{ inlineChineseToT: false }` | **`Partial<I18nRuntimeOptions>`**：只覆盖 **runtime 插件**选项，合并规则同 `extract`。聚合包内 **`runtime.localesDir`** 仍会强制与 **`extract` 的 `outputDir`（即 `localesDir`）** 一致，勿拆成两个目录。 |
+
+（表中未列字段、以及与 `I18nExtractOptions` / `I18nRuntimeOptions` 完全一致的嵌套类型，以包内导出的 **`I18nAutoOptions`** 为准。）
 
 ## TypeScript 与 `virtual:i18n-runtime`
 
@@ -180,7 +203,6 @@ pnpm dev
 
 - 首版面向 **React + JSX/TSX**。
 - **`$t` 的 `type: 'ai'`** 仅为类型预留，当前以 **`custom` + `url`** 为主。
-- **自动 `injectProvider`** 不保证覆盖所有入口写法；生产环境可参考示例手写 `I18nProvider`。
 
 ## 许可证
 
