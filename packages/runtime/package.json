@@ -11,6 +11,9 @@
     "url": "https://github.com/malinli-88/vite-plugin-i18n-auto/issues"
   },
   "homepage": "https://github.com/malinli-88/vite-plugin-i18n-auto/tree/main/packages/runtime#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
