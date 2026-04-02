@@ -1,6 +1,14 @@
 {
   "i18n_457d36189b0d": "Current language",
   "i18n_192d16c5fbce": "Simplified Chinese",
-  "i18n_3d38acf2f851": "hello, example",
-  "i18n_9c4e54b11a09": "This is the Chinese interface"
+  "i18n_3d38acf2f851": "Hello, example",
+  "i18n_9c4e54b11a09": "This is the Chinese interface",
+  "i18n_b27370bafe51": "Test: Chinese in JSX attributes",
+  "i18n_55a3559f09e5": "Below: Chinese in title, placeholder, aria-label and other attributes; switch to English to verify they translate with the rest.",
+  "i18n_2e320618a64b": "Application Programming Interface",
+  "i18n_c41c0dca0ccb": "Hover to see this native title",
+  "i18n_53bc5635d75b": "Hover this text",
+  "i18n_c0fb9e2de962": "Search field label",
+  "i18n_ce3bdd745936": "Enter keywords",
+  "i18n_0c6a857ae643": "Search input"
 }

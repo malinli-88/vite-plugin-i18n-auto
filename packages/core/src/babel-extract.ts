@@ -74,7 +74,14 @@ function replaceStringLiteral(
 ): void {
   messages[key] = value;
   const arg = callee === '__tr' ? t.stringLiteral(value) : t.stringLiteral(key);
-  path.replaceWith(t.callExpression(t.identifier(callee), [arg]));
+  const call = t.callExpression(t.identifier(callee), [arg]);
+  // JSX 属性简写为 attr="中文" 时 value 为 StringLiteral，需包一层 JSXExpressionContainer，否则替换为 CallExpression 非法
+  const parent = path.parentPath;
+  if (parent?.isJSXAttribute()) {
+    path.replaceWith(t.jsxExpressionContainer(call));
+  } else {
+    path.replaceWith(call);
+  }
 }
 
 function replaceJsxText(

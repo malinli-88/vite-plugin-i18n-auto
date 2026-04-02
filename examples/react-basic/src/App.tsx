@@ -50,6 +50,31 @@ function App() {
       </header>
       <h1>你好，示例</h1>
       <p>这是中文界面</p>
+
+      <section style={{ marginTop: 28, paddingTop: 20, borderTop: '1px solid #e5e5e5' }}>
+        <h2 style={{ fontSize: 16, margin: '0 0 12px', fontWeight: 600 }}>
+          测试：写在 JSX 属性里的中文
+        </h2>
+        <p style={{ margin: '0 0 12px', color: '#555', fontSize: 14, lineHeight: 1.5 }}>
+          下面包含写在 title、placeholder、aria-label 等属性里的中文；切换 English 后应与正文一起参与翻译。
+        </p>
+        <p style={{ marginBottom: 12 }}>
+          <abbr title="应用程序编程接口">API</abbr>
+          <span style={{ marginLeft: 8 }} title="悬停查看这条原生 title">
+            悬停这条文字
+          </span>
+        </p>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: 320, fontSize: 14 }}>
+          搜索框标签
+          <input
+            type="search"
+            placeholder="请输入关键词"
+            aria-label="搜索输入框"
+            style={{ padding: '8px 10px', fontSize: 14, border: '1px solid #ccc', borderRadius: 4 }}
+          />
+        </label>
+      </section>
+
       {/* $$t：不参与提取与翻译；切换 en-US 后上面段落会变英文，本行仍显示原文 */}
       <p style={{ marginTop: 16, color: '#888', fontSize: 14 }}>
         {$$t('此句不进入语言包，任何语言下都显示这一句')}

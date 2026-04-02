@@ -21,17 +21,17 @@ pnpm add -D @vite-plugin-i18n-auto/overall
 与**当前文档、各包 `package.json` 对齐的已发布版本**（可锁版本、便于复盘与 CI）：
 
 ```bash
-pnpm add -D @vite-plugin-i18n-auto/overall@0.1.1
+pnpm add -D @vite-plugin-i18n-auto/overall@0.1.2
 ```
 
-> 每次在 npm **升版发布后**，请把上一行里的 `0.1.1` 改成新版本号，并同步更新下文「版本与 GitHub Release」中的说明。
+> 每次在 npm **升版发布后**，请把上一行里的 `0.1.2` 改成新版本号，并同步更新下文「版本与 GitHub Release」中的说明。
 
 同时需要 **`@vitejs/plugin-react`**、**`vite`**、**`react`**、**`react-dom`**（版本见示例 `package.json` 量级即可）。
 
 ### 版本与 GitHub Release
 
-- **当前 npm 对照版本：`0.1.1`**（`@vite-plugin-i18n-auto/core`、`extract`、`runtime`、`overall` 同号发布时一致）。
-- 在 [仓库 Releases](https://github.com/malinli-88/vite-plugin-i18n-auto/releases) 页点击 **Create a new release**：**Choose a tag** 新建 `v0.1.1`（与 `package.json` 的 `version` 对应，惯例加前缀 `v`），**Release title** 可写 `v0.1.1`，说明栏粘贴变更摘要即可；首次公开可写一句「首个公开发布，能力见 README」。
+- **当前 npm 对照版本：`0.1.2`**（`@vite-plugin-i18n-auto/core`、`extract`、`runtime`、`overall` 同号发布时一致）。
+- 在 [仓库 Releases](https://github.com/malinli-88/vite-plugin-i18n-auto/releases) 页点击 **Create a new release**：**Choose a tag** 新建 `v0.1.2`（与 `package.json` 的 `version` 对应，惯例加前缀 `v`），**Release title** 可写 `v0.1.2`，说明栏粘贴变更摘要即可；首次公开可写一句「首个公开发布，能力见 README」。
 - 流程建议：**先本地构建并 `pnpm publish` 成功**，再打同名 tag、发 Release，这样文档、`npm` 与 GitHub 上用户看到的版本一致。
 
 ## Vite 配置（与 `examples/react-basic` 一致）

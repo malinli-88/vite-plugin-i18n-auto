@@ -24,7 +24,7 @@ importers:
         specifier: ^18.3.1
         version: 18.3.7(@types/react@18.3.28)
       '@vite-plugin-i18n-auto/overall':
-        specifier: ^0.1.1
+        specifier: ^0.1.2
         version: link:../../packages/vite-plugin-i18n-auto
       '@vitejs/plugin-react':
         specifier: ^4.3.4
@@ -85,7 +85,7 @@ importers:
   packages/extract:
     dependencies:
       '@vite-plugin-i18n-auto/core':
-        specifier: ^0.1.1
+        specifier: ^0.1.2
         version: link:../core
       picomatch:
         specifier: ^4.0.2
@@ -116,7 +116,7 @@ importers:
   packages/runtime:
     dependencies:
       '@vite-plugin-i18n-auto/core':
-        specifier: ^0.1.1
+        specifier: ^0.1.2
         version: link:../core
       picomatch:
         specifier: ^4.0.2
@@ -159,13 +159,13 @@ importers:
   packages/vite-plugin-i18n-auto:
     dependencies:
       '@vite-plugin-i18n-auto/core':
-        specifier: ^0.1.1
+        specifier: ^0.1.2
         version: link:../core
       '@vite-plugin-i18n-auto/extract':
-        specifier: ^0.1.1
+        specifier: ^0.1.2
         version: link:../extract
       '@vite-plugin-i18n-auto/runtime':
-        specifier: ^0.1.1
+        specifier: ^0.1.2
         version: link:../runtime
       react:
         specifier: ^18.0.0 || ^19.0.0

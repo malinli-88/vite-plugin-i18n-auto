@@ -12,24 +12,22 @@ export interface WriteLocalesParams {
   translate: TranslateMode;
 }
 
-/** 生成可供 runtime 安全解析的 index.ts（JSON 数组单行，便于正则 + JSON.parse） */
+/** 生成可供 runtime 安全解析的 index.ts（空模块/语言列表时类型为 never，避免出现 `export type X = ;`） */
 export function generateIndexTsContent(
   moduleNames: string[],
   locales: string[]
 ): string {
   const modSorted = [...moduleNames].sort();
   const locSorted = [...locales].sort();
-  const localeUnion = locSorted.map((l) => JSON.stringify(l)).join(' | ');
-  const moduleUnion = modSorted.map((m) => JSON.stringify(m)).join(' | ');
   const modulesJson = JSON.stringify(modSorted);
   const localesJson = JSON.stringify(locSorted);
 
   return `/* 由 vite-plugin-i18n-auto extract 生成，请勿手改模块/语言列表结构 */
-export type Locale = ${localeUnion};
-export type ModuleName = ${moduleUnion};
-
 export const modules = ${modulesJson} as const;
 export const locales = ${localesJson} as const;
+
+export type ModuleName = (typeof modules)[number];
+export type Locale = (typeof locales)[number];
 
 export async function loadModule(
   locale: Locale,
