@@ -21,7 +21,6 @@ export function i18nAuto(userOptions: I18nAutoOptions = {}): Plugin[] {
     moduleMapping: userOptions.moduleMapping,
     include: userOptions.include,
     exclude: userOptions.exclude,
-    replaceInSource: userOptions.replaceInSource ?? true,
     translate: userOptions.translate ?? 'manual',
     skipCallNames: userOptions.skipCallNames,
     ...userOptions.extract,
@@ -41,6 +40,9 @@ export function i18nAuto(userOptions: I18nAutoOptions = {}): Plugin[] {
     typesOutput: userOptions.typesOutput,
     ...userOptions.runtime,
     localesDir: baseExtract.outputDir!,
+    inlineChineseToT:
+      userOptions.runtime?.inlineChineseToT ?? userOptions.inlineChineseToT ?? true,
+    skipCallNames: userOptions.runtime?.skipCallNames ?? userOptions.skipCallNames,
   };
 
   const runtimePlugin = i18nRuntime(runtimeOpts);

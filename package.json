@@ -1,6 +1,15 @@
 {
   "name": "vite-plugin-i18n-auto-monorepo",
   "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/malinli-88/vite-plugin-i18n-auto.git"
+  },
+  "bugs": {
+    "url": "https://github.com/malinli-88/vite-plugin-i18n-auto/issues"
+  },
+  "homepage": "https://github.com/malinli-88/vite-plugin-i18n-auto#readme",
   "type": "module",
   "packageManager": "pnpm@9.15.0",
   "scripts": {

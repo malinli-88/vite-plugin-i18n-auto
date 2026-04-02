@@ -7,7 +7,8 @@ import type { ExtractCodeOptions, ExtractCodeResult } from './types.js';
 import { hasChinese } from './chinese.js';
 import { makeStableKey } from './stable-key.js';
 
-const DEFAULT_SKIP_CALLS = ['t', '$t'];
+/** t / __tr / $t：已接入 i18n；$$t：显式不参与提取与翻译（__tr 仅插件注入，不对手写 tr 兼容） */
+const DEFAULT_SKIP_CALLS = ['t', '__tr', '$t', '$$t'];
 
 function buildSkipSet(extra?: string[]): Set<string> {
   const s = new Set<string>(DEFAULT_SKIP_CALLS);
@@ -31,7 +32,7 @@ function calleeMatchesSkip(
   return false;
 }
 
-/** 字面量是否位于应跳过的 CallExpression 参数树内（t / $t / i18n.t） */
+/** 字面量是否位于应跳过的 CallExpression 参数树内（t / __tr / $t / $$t / i18n.t） */
 function isInsideSkippedCall(
   path: NodePath<t.StringLiteral | t.JSXText>,
   skipSet: Set<string>
@@ -44,6 +45,13 @@ function isInsideSkippedCall(
     p = p.parentPath;
   }
   return false;
+}
+
+/**
+ * 提取与 key 生成使用：去掉前后空格、换行等，避免 JSX 缩进导致语言包原文与 __tr(…) 不一致
+ */
+function normalizeExtractText(raw: string): string {
+  return raw.trim();
 }
 
 /** import / export / dynamic import 的源字符串不提取 */
@@ -61,26 +69,30 @@ function replaceStringLiteral(
   path: NodePath<t.StringLiteral>,
   key: string,
   messages: Record<string, string>,
-  value: string
+  value: string,
+  callee: 't' | '__tr'
 ): void {
   messages[key] = value;
-  path.replaceWith(t.callExpression(t.identifier('t'), [t.stringLiteral(key)]));
+  const arg = callee === '__tr' ? t.stringLiteral(value) : t.stringLiteral(key);
+  path.replaceWith(t.callExpression(t.identifier(callee), [arg]));
 }
 
 function replaceJsxText(
   path: NodePath<t.JSXText>,
   key: string,
   messages: Record<string, string>,
-  value: string
+  value: string,
+  callee: 't' | '__tr'
 ): void {
   messages[key] = value;
+  const arg = callee === '__tr' ? t.stringLiteral(value) : t.stringLiteral(key);
   path.replaceWith(
-    t.jsxExpressionContainer(t.callExpression(t.identifier('t'), [t.stringLiteral(key)]))
+    t.jsxExpressionContainer(t.callExpression(t.identifier(callee), [arg]))
   );
 }
 
 /**
- * 从单文件源码提取中文并按选项替换为 t('key')
+ * 从单文件源码提取中文并按选项替换为 t('key') 或 __tr('原文')
  */
 export function extractFromSource(code: string, options: ExtractCodeOptions): ExtractCodeResult {
   const messages: Record<string, string> = {};
@@ -97,31 +109,33 @@ export function extractFromSource(code: string, options: ExtractCodeOptions): Ex
   }
 
   const { keyRegistry, filePath, replaceInSource } = options;
+  const callee: 't' | '__tr' = options.translateCallee ?? 't';
   const skipSet = buildSkipSet(options.skipCallNames);
 
   traverseAst(ast, {
-    StringLiteral(path) {
-      const v = path.node.value;
+    StringLiteral(path: NodePath<t.StringLiteral>) {
+      const v = normalizeExtractText(path.node.value);
+      if (!v) return;
       if (!hasChinese(v)) return;
       if (isModuleSpecifierLiteral(path)) return;
       if (isInsideSkippedCall(path, skipSet)) return;
 
       const key = makeStableKey(keyRegistry, filePath, v);
       if (replaceInSource) {
-        replaceStringLiteral(path, key, messages, v);
+        replaceStringLiteral(path, key, messages, v, callee);
       } else {
         messages[key] = v;
       }
     },
-    JSXText(path) {
-      const v = path.node.value;
+    JSXText(path: NodePath<t.JSXText>) {
+      const v = normalizeExtractText(path.node.value);
+      if (!v) return;
       if (!hasChinese(v)) return;
       if (isInsideSkippedCall(path, skipSet)) return;
-      if (!v.trim()) return;
 
       const key = makeStableKey(keyRegistry, filePath, v);
       if (replaceInSource) {
-        replaceJsxText(path, key, messages, v);
+        replaceJsxText(path, key, messages, v, callee);
       } else {
         messages[key] = v;
       }

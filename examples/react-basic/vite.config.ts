@@ -11,7 +11,6 @@ export default defineConfig({
       defaultLocale: 'zh-CN',
       targetLocales: ['en-US'],
       translate: 'manual',
-      replaceInSource: true,
       initialModules: ['common'],
       entryFile: 'src/main.tsx',
       injectProvider: false,

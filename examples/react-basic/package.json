@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "extract:auto-i18n": "i18n-extract --config i18n-extract.config.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -17,6 +18,6 @@
     "@vitejs/plugin-react": "^4.3.4",
     "typescript": "^5.7.2",
     "vite": "^6.0.3",
-    "@vite-plugin-i18n-auto/overall": "^0.1.0"
+    "@vite-plugin-i18n-auto/overall": "^0.1.1"
   }
 }

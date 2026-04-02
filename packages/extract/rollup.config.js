@@ -17,6 +17,17 @@ export default [
     plugins: [esbuild({ target: 'node18', platform: 'node' })],
   },
   {
+    input: 'src/cli.ts',
+    output: {
+      file: 'dist/cli.js',
+      format: 'esm',
+      sourcemap: true,
+      banner: '#!/usr/bin/env node\n',
+    },
+    external,
+    plugins: [esbuild({ target: 'node18', platform: 'node' })],
+  },
+  {
     input: 'src/index.ts',
     output: { file: 'dist/index.d.ts', format: 'esm' },
     external,

@@ -1,6 +1,16 @@
 {
   "name": "@vite-plugin-i18n-auto/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/malinli-88/vite-plugin-i18n-auto.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/malinli-88/vite-plugin-i18n-auto/issues"
+  },
+  "homepage": "https://github.com/malinli-88/vite-plugin-i18n-auto/tree/main/packages/core#readme",
   "type": "module",
   "main": "./dist/index.js",
   "module":        "./dist/index.js",

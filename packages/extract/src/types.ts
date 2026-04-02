@@ -10,7 +10,6 @@ export interface I18nExtractOptions {
   defaultLocale?: string;
   targetLocales?: string[];
   moduleMapping?: (filePath: string) => string;
-  replaceInSource?: boolean;
   translate?: TranslateMode;
   skipCallNames?: string[];
 }

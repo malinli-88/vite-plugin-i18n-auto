@@ -24,7 +24,6 @@ export default function i18nExtractPlugin(userOptions: I18nExtractOptions = {}):
   const defaultLocale = userOptions.defaultLocale ?? 'zh-CN';
   const targetLocales = userOptions.targetLocales ?? ['en-US'];
   const moduleMapping = userOptions.moduleMapping ?? (() => 'common');
-  const replaceInSource = userOptions.replaceInSource ?? true;
   const translate: TranslateMode = userOptions.translate ?? 'manual';
   const skipCallNames = userOptions.skipCallNames;
 
@@ -63,20 +62,18 @@ export default function i18nExtractPlugin(userOptions: I18nExtractOptions = {}):
         byLocale.set(defaultLocale, defMap);
       }
 
-      const { messages, code: outCode, modified } = extractFromSource(code, {
+      // 仅聚合文案写语言包；中文改为 __tr('原文') 由 @vite-plugin-i18n-auto/runtime 的 inlineChineseToT 统一处理
+      const { messages } = extractFromSource(code, {
         keyRegistry,
         filePath: normId,
         moduleName: modName,
         defaultLocale,
-        replaceInSource,
+        replaceInSource: false,
         skipCallNames,
       });
 
       Object.assign(defMap, messages);
 
-      if (modified) {
-        return { code: outCode, map: null };
-      }
       return null;
     },
 

@@ -15,7 +15,6 @@ export interface I18nAutoOptions {
   defaultLocale?: string;
   targetLocales?: string[];
   moduleMapping?: I18nExtractOptions['moduleMapping'];
-  replaceInSource?: boolean;
   translate?: TranslateMode;
   skipCallNames?: I18nExtractOptions['skipCallNames'];
 
@@ -26,6 +25,8 @@ export interface I18nAutoOptions {
   injectProvider?: I18nRuntimeOptions['injectProvider'];
   entryFile?: I18nRuntimeOptions['entryFile'];
   typesOutput?: I18nRuntimeOptions['typesOutput'];
+  /** 与 I18nRuntimeOptions.inlineChineseToT 一致；默认 true（业务源码不用手写 t()） */
+  inlineChineseToT?: I18nRuntimeOptions['inlineChineseToT'];
 
   /** 合并进 extract 插件（优先级高于上面的共享字段） */
   extract?: Partial<I18nExtractOptions>;
