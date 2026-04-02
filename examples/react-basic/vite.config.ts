@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import i18nAuto from 'vite-plugin-i18n-auto';
+import i18nAuto from '@vite-plugin-i18n-auto/overall';
 
 export default defineConfig({
   plugins: [

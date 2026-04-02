@@ -9,7 +9,7 @@
 | 路径 | 说明 |
 |------|------|
 | `packages/core` | AST 提取、写盘、`index.ts` 生成、索引解析工具 |
-| `packages/vite-plugin-i18n-auto` | **`vite-plugin-i18n-auto`**：推荐安装，一次配置同时启用 extract + runtime |
+| `packages/vite-plugin-i18n-auto` | **`@vite-plugin-i18n-auto/overall`**：推荐安装，一次配置同时启用 extract + runtime |
 | `packages/extract` | `@vite-plugin-i18n-auto/extract` — 可单独使用 |
 | `packages/runtime` | `@vite-plugin-i18n-auto/runtime` — 可单独使用 |
 | `examples/react-basic` | 最小可运行示例 |
@@ -25,7 +25,7 @@
 推荐使用聚合包（单依赖）：
 
 ```bash
-pnpm add -D vite-plugin-i18n-auto
+pnpm add -D @vite-plugin-i18n-auto/overall
 ```
 
 仅需子包时：
@@ -34,9 +34,9 @@ pnpm add -D vite-plugin-i18n-auto
 pnpm add -D @vite-plugin-i18n-auto/extract @vite-plugin-i18n-auto/runtime
 ```
 
-本 monorepo 内开发使用 `^0.1.0`（见 `examples/react-basic/package.json`）。
+本 monorepo 内示例通过 `workspace:*` 依赖 **`@vite-plugin-i18n-auto/overall`**（见 `examples/react-basic/package.json`）。
 
-## 在 Vite 中使用（推荐：`vite-plugin-i18n-auto`）
+## 在 Vite 中使用（推荐：`@vite-plugin-i18n-auto/overall`）
 
 聚合函数 **`i18nAuto(options)`** 返回 **`[extractPlugin, runtimePlugin]`**，展开到 `flatten` 的 `plugins` 即可，无需手写顺序：
 
@@ -44,7 +44,7 @@ pnpm add -D @vite-plugin-i18n-auto/extract @vite-plugin-i18n-auto/runtime
 // vite.config.ts
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import i18nAuto from 'vite-plugin-i18n-auto';
+import i18nAuto from '@vite-plugin-i18n-auto/overall';
 
 export default defineConfig({
   plugins: [
@@ -70,7 +70,7 @@ export default defineConfig({
 TypeScript 可使用 **`defineI18nAutoConfig`** 获得提示（无运行时逻辑）：
 
 ```ts
-import i18nAuto, { defineI18nAutoConfig } from 'vite-plugin-i18n-auto';
+import i18nAuto, { defineI18nAutoConfig } from '@vite-plugin-i18n-auto/overall';
 
 const i18nOptions = defineI18nAutoConfig({
   localesDir: 'src/locales',
@@ -167,7 +167,7 @@ pnpm build
 仅构建库包（含聚合包）：
 
 ```bash
-pnpm --filter "@vite-plugin-i18n-auto/*" --filter vite-plugin-i18n-auto run build
+pnpm --filter "@vite-plugin-i18n-auto/*" run build
 ```
 
 运行示例：

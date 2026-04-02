@@ -1,5 +1,5 @@
 {
-  "name": "vite-plugin-i18n-auto",
+  "name": "@vite-plugin-i18n-auto/overall",
   "version": "0.1.0",
   "description": "Vite 插件聚合：中文提取 + React 运行时 i18n（单包配置）",
   "type": "module",
