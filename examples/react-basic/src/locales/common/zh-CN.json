@@ -10,5 +10,22 @@
   "i18n_53bc5635d75b": "悬停这条文字",
   "i18n_c0fb9e2de962": "搜索框标签",
   "i18n_ce3bdd745936": "请输入关键词",
-  "i18n_0c6a857ae643": "搜索输入框"
+  "i18n_0c6a857ae643": "搜索输入框",
+  "demo_t_by_key": "按 key 使用 t() 的示例文案",
+  "demo_interpolate": "占位符示例：共 {count} 条",
+  "demo_section_1": "1. 直接写中文（由插件接入，含 JSX 文本与属性）",
+  "demo_section_3": "3. 按 key：t('…') 与 useI18n().t",
+  "demo_section_4": "4. 占位符",
+  "demo_section_5": "5. $$t：不进语言包，各语言都显示传入字面量",
+  "demo_section_6": "6. 异步 $t / use$t（远端翻译需在 vite 配置 dynamicTranslate；未配置时跨语言一般会退回传入字符串）",
+  "demo_line_1c": "1c 属性里的中文（title / placeholder / aria-label 等）",
+  "demo_btn_async_t": "点击调用 $t（可在事件中使用）",
+  "demo_async_loading": "加载中…",
+  "i18n_c1b7bb56e34a": "$tr：",
+  "i18n_53a03da67cc3": "：",
+  "i18n_a9d97faf2b04": "useI18n().t：",
+  "i18n_fbe119011bdf": "结果：",
+  "i18n_2b8a86a45ccb": "use$t：",
+  "i18n_8916a941e445": "useTranslate：",
+  "i18n_9c4e54b11a09_1": "这是中文界面"
 }

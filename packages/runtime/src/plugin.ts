@@ -16,19 +16,24 @@ function needsI18nInject(code: string): boolean {
   return (
     hasChinese(code) ||
     /(?<!\$)\bt\s*\(/.test(code) ||
-    /\b__tr\s*\(/.test(code) ||
+    /\$tr\s*\(/.test(code) ||
+    /\buseTranslate\s*\(/.test(code) ||
     /(?<!\$)\$t\s*\(/.test(code) ||
     /\buse\$t\s*\(/.test(code) ||
     /\$\$t\s*\(/.test(code)
   );
 }
 
-/** 按需列出 virtual 导入符号；仅 __tr/t/$t 需要 preload */
+/** 按需列出 virtual 导入符号；$tr / useTranslate / t / $t 等需要 preload */
 function collectVirtualImportNeeds(code: string): { names: string[]; needsPreload: boolean } {
   const names: string[] = [];
   let needsPreload = false;
-  if (/\b__tr\s*\(/.test(code)) {
-    names.push('__tr');
+  if (/\$tr\s*\(/.test(code)) {
+    names.push('$tr');
+    needsPreload = true;
+  }
+  if (/\buseTranslate\s*\(/.test(code)) {
+    names.push('useTranslate');
     needsPreload = true;
   }
   if (/(?<!\$)\bt\s*\(/.test(code)) {
@@ -68,7 +73,7 @@ function parseImportSpecNames(inner: string): string[] {
 }
 
 /**
- * 已有 virtual 模块导入时补齐 __tr / t / $t / $$t / preloadI18nModule（避免仅含 useI18n 时漏掉 __tr）
+ * 已有 virtual 模块导入时补齐 $tr / useTranslate / t / $t / $$t / preloadI18nModule
  */
 function ensureVirtualRuntimeBindings(code: string, modName: string): { code: string; changed: boolean } {
   let changed = false;
@@ -117,9 +122,16 @@ const VIRTUAL_RUNTIME_TYPES = `declare module "${RUNTIME_ID}" {
   export type ModuleName = string;
   export function t(key: string, params?: Record<string, string | number>): string;
   /**
-   * 仅由插件注入，按默认语言原文取译文；请勿在业务代码中手写或 import。
+   * 静态按原文取译文（无 useContext）；插件默认注入，也可手写；勿与异步 $t 混淆。
    */
-  export function __tr(text: string, params?: Record<string, string | number>): string;
+  export function $tr(text: string, params?: Record<string, string | number>): string;
+  /**
+   * 订阅语言上下文，返回 (text, params?) => 译文；仅组件/自定义 Hook 内调用。
+   */
+  export function useTranslate(): (
+    text: string,
+    params?: Record<string, string | number>
+  ) => string;
   export function $$t(text: string): string;
   export function $t(text: string): Promise<string>;
   export function use$t(text: string): { text: string; loading: boolean };
@@ -214,7 +226,7 @@ export default function i18nRuntimePlugin(userOptions: I18nRuntimeOptions = {}):
           moduleName: moduleMapping(normId),
           defaultLocale,
           replaceInSource: true,
-          translateCallee: '__tr',
+          translateCallee: '$tr',
           skipCallNames,
         });
         if (modified) {

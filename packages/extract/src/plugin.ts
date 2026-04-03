@@ -62,7 +62,7 @@ export default function i18nExtractPlugin(userOptions: I18nExtractOptions = {}):
         byLocale.set(defaultLocale, defMap);
       }
 
-      // 仅聚合文案写语言包；中文改为 __tr('原文') 由 @vite-plugin-i18n-auto/runtime 的 inlineChineseToT 统一处理
+      // 仅聚合文案写语言包；中文改为 $tr('原文')（静态）由 @vite-plugin-i18n-auto/runtime 的 inlineChineseToT 统一处理
       const { messages } = extractFromSource(code, {
         keyRegistry,
         filePath: normId,

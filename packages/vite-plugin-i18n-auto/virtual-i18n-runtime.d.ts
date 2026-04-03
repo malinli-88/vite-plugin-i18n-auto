@@ -8,8 +8,15 @@ declare module "virtual:i18n-runtime" {
   export type Locale = string;
   export type ModuleName = string;
   export function t(key: string, params?: Record<string, string | number>): string;
-  /** 仅插件注入，请勿在业务中手写 */
-  export function __tr(text: string, params?: Record<string, string | number>): string;
+  /** 静态按原文取译文（无 useContext）；插件默认注入，也可手写；勿与异步 $t 混淆 */
+  export function $tr(text: string, params?: Record<string, string | number>): string;
+  /**
+   * 订阅语言上下文，返回翻译函数；仅组件或自定义 Hook 内调用。
+   */
+  export function useTranslate(): (
+    text: string,
+    params?: Record<string, string | number>
+  ) => string;
   export function $$t(text: string): string;
   export function $t(text: string): Promise<string>;
   export function use$t(text: string): { text: string; loading: boolean };

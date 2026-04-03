@@ -59,17 +59,30 @@ export function t(key, params) {
   return interpolate(raw, params);
 }
 
-/**
- * 按默认语言原文取当前语言译文；仅由插件注入 __tr('中文')，不对手写 export。
- * 同一原文对应多 key 时最后一次写入反向表者生效。
- */
-export function __tr(text, params) {
-  const ctx = React.useContext(I18nCtx);
-  if (!ctx) return text;
-  void ctx.locale;
+/** 按原文从 textToKey / currentMessages 解析译文（$tr / useTranslate 回调共用，无 Hook） */
+function resolveTrText(text, params) {
   const key = textToKey[text];
   const raw = key != null ? (currentMessages[key] !== undefined ? currentMessages[key] : text) : text;
   return interpolate(raw, params);
+}
+
+/**
+ * 静态按原文取译文，只读模块表，无 useContext；插件默认注入，也可在任意作用域手写。
+ * 同一原文对应多 key 时最后一次写入反向表者生效。
+ */
+export function $tr(text, params) {
+  return resolveTrText(text, params);
+}
+
+/**
+ * 仅可在组件或自定义 Hook 内调用；返回的函数按原文取译文并订阅 I18nCtx，切语言时触发重渲染。
+ * 用法：const tr = useTranslate(); tr('中文')。勿在模块顶层调用本 Hook；与异步 $t 不同。
+ */
+export function useTranslate() {
+  const ctx = React.useContext(I18nCtx);
+  if (ctx) void ctx.locale;
+  const localeTag = ctx ? ctx.locale : null;
+  return React.useCallback((text, params) => resolveTrText(text, params), [localeTag]);
 }
 
 /** 不参与提取与替换，运行时常量原样返回（品牌名、固定展示文案等） */
